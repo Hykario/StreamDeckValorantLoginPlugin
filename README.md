@@ -1,6 +1,6 @@
 # Stream Deck Visualizer
 
-This plugin is used is used to visualize audio input / output from any sound device you have attached to your PC.
+This plugin is used is used quickly log into League of Legends and will support multiple accounts so that you can log into all of your accounts easily. It will also terminate all Riot client processes so that you don't have to wait between logins. 
 
 Pre-requisites. 
    * Install the latest version of [dotnet](https://dotnet.microsoft.com/en-us/download)
@@ -12,8 +12,8 @@ I have submitted this to the Elgato marketplace, so most people should install i
 
 ### Thank Yous
 * BarRaider: https://github.com/BarRaider/streamdeck-tools
-* Mark Heath / NAudio: https://github.com/naudio/NAudio
-* Icooon Mono: https://icooon-mono.com
+* iLya Lozovyy / CredentialManagement: https://github.com/ilyalozovyy/credentialmanagement
+* SVG Repo : https://www.svgrepo.com/svg/141471/login
 
 # Stream Info
 I stream every night at 10pm Central on Twitch. If you like League of Legends and a chill stream, come and check me out!
