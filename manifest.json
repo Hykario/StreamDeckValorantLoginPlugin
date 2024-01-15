@@ -1,0 +1,38 @@
+﻿{
+    "Actions": [
+        {
+            "Icon": "Images/action20",
+            "Name": "LoL Login",
+            "States": [
+                {
+                    "Image": "Images/action20",
+                    "TitleAlignment": "bottom",
+                    "FontSize": "7"
+                }
+            ],
+            "SupportedInMultiActions": false,
+            "Tooltip": "Auto-Login for League of Legends",
+            "UUID": "com.zaphop.lollogin.lollogin"
+        }
+    ],
+    "SDKVersion": 2,
+    "Author": "Nick Pirocanac",
+    "CodePath": "com.zaphop.lollogin.exe",
+    "Description": "League of Legends Login",
+    "Name": "LoL Login",
+    "Category": "LoL Utilities",
+    "CategoryIcon": "Images/categoryIcon",
+    "Icon": "Images/zhgold288",
+    "URL": "https://github.com/BackTrak/StreamDeckLolLoginPlugin",
+    "Version": "1.0.0.1",
+    "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html",
+    "OS": [
+        {
+            "Platform": "windows",
+            "MinimumVersion": "10"
+        }
+    ],
+    "Software": {
+        "MinimumVersion": "4.1"
+    }
+}
