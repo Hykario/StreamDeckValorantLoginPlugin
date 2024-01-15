@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CredentialManager));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dgUserName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -89,8 +90,9 @@
             this.ClientSize = new System.Drawing.Size(576, 388);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.statusStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "CredentialManager";
-            this.Text = "LoL Credential Manager";
+            this.Text = "League of Legends Credential Manager";
             this.Load += new System.EventHandler(this.CredentialManager_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);

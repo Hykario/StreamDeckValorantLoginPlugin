@@ -119,7 +119,6 @@
     <Compile Include="WindowWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include=".gitlab-ci.yml" />
     <None Include="App.config" />
     <None Include="Install.bat" />
     <None Include="manifest.json">

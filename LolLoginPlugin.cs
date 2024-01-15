@@ -16,12 +16,14 @@ namespace LolLogin
     {
         private SDConnection _connection;
         private string _username = null;
+        private int _loginWaitSeconds = 3;
 
         private void UpdateSettings(JObject settings)
         {
             _username = settings.Value<String>("username");
+            //var logingWaitSeconds = settings.Value<string>("login_wait_seconds");
 
-            
+            Int32.TryParse(settings.Value<string>("login_wait_seconds"), out _loginWaitSeconds);
         }
 
         public LolLoginPlugin(SDConnection connection, InitialPayload payload) : base(connection, payload)
@@ -41,8 +43,14 @@ namespace LolLogin
             var action = e.Event.Payload.Value<string>("action");
             if (action == "showCredentialManager")
             {
-                WindowWrapper mainProcWindow = new WindowWrapper(ParentProcessUtilities.GetParentProcess().MainWindowHandle);
-                new CredentialManager().ShowDialog(mainProcWindow);
+                //WindowWrapper mainProcWindow = new WindowWrapper(ParentProcessUtilities.GetParentProcess().MainWindowHandle);
+                var streamDeckProcess = Process.GetProcesses().FirstOrDefault(p => p.ProcessName.Equals("StreamDeck"));
+
+                if (streamDeckProcess == null)
+                    throw new Exception("Couldn't find StreamDeck process, so CredentialManager dialog window could not be shown.");
+
+                //new CredentialManager().ShowDialog(mainProcWindow);
+                new CredentialManager().ShowDialog(new WindowWrapper(streamDeckProcess.MainWindowHandle));
                 SendCurrentUserList(_connection);
             }
 
@@ -86,7 +94,7 @@ namespace LolLogin
             Debug.WriteLine(_username);
             
             var loginManager = new LolLoginManager();
-            loginManager.Login(_username);
+            loginManager.Login(_username, _loginWaitSeconds);
         }
 
         public override void KeyReleased(KeyPayload payload) { }

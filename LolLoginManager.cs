@@ -14,7 +14,7 @@ namespace LolLogin
 {
     internal class LolLoginManager
     {
-        public void Login(string username)
+        public void Login(string username, int loginWaitSeconds)
         {
             var password = GetPasswordFromCredentialManager(username);
 
@@ -24,8 +24,7 @@ namespace LolLogin
 
             Win32.RECT rect = WaitForRiotClient(30);
 
-            // TODO: This is probably a parameter for the user to set.
-            Thread.Sleep(3000);
+            Thread.Sleep(loginWaitSeconds * 1000);
 
             var offsetX = 110F / 1536F * (rect.right - rect.left);
             var offsetY = 250F / 864F * (rect.bottom - rect.top);
@@ -124,7 +123,17 @@ namespace LolLogin
             var runningProcesses = new List<Process>();
 
             foreach (var item in processes)
-                runningProcesses.Add(Process.Start($"taskkill", $"/f /im {item}"));
+            {
+                Process cmd = new Process();
+                cmd.StartInfo.FileName = "taskkill";
+                cmd.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                cmd.StartInfo.Arguments = $"/f /im {item}";
+                cmd.Start();
+                
+                runningProcesses.Add(cmd);
+
+                //runningProcesses.Add(Process.Start($"taskkill", $"/f /im {item}"));
+            }
 
             while (true)
             {

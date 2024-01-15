@@ -20,12 +20,16 @@
             </select>
         </div>
 
-        <div class="sdpi-item" id="lollogin_credential_manager">
+        <div class="sdpi-item" id="lollogin_login_wait_seconds">
+            <div class="sdpi-item-label">Login Window Wait Seconds</div>
+            <input type="text" class="sdProperty sdpi-item-value field" id="login_wait_seconds" value="3" placeholder="e.g. 3" required pattern="\d{1,2}" onchange="setSettings()" />
+        </div>
 
+        <div class="sdpi-item" id="lollogin_credential_manager">
             <button class="sdProperty sdpi-item-value button" onclick="showCredentialManager()">Credential Manager</button>
         </div>
-        <div class="sdpi-item" id="lollogin_credential_manager">
 
+        <div class="sdpi-item" id="lollogin_credential_manager">
             <button class="sdProperty sdpi-item-value button" onclick="showHelp()">Help</button>
         </div>
 
@@ -34,23 +38,6 @@
 
 <script>
 
-    //function onSelectionChange() {
-    //    let mode = $('#visualizer_mode').val();
-
-    //    if (mode == 'CustomColor') {
-    //        $('#custom_color_select').show();
-    //        $('#gradient_color_select').hide();
-    //    }
-    //    else if (mode == 'Gradient') {
-    //        $('#custom_color_select').show();
-    //        $('#gradient_color_select').show();
-    //    }
-    //    else {
-    //        $('#custom_color_select').hide();
-    //        $('#gradient_color_select').hide();
-    //    }
-    //}
-
     document.addEventListener('websocketCreate', function () {
         websocket.addEventListener('message', function (event) {
             console.log("Got message event!", event.data);
@@ -58,21 +45,15 @@
             let message = JSON.parse(event.data);
 
             if (message.event == "sendToPropertyInspector") {
-                //let payload = JSON.parse(message.payload);
                 console.log("payload", message.payload);
 
                 $('#username').children().remove().end();
-
-                //$('#username').append('<option value="">Default Output Device</option>');
 
                 message.payload.UserNames.forEach((element) => {
                     $('#username').append('<option value="' + element.ID + '">' + element.Name + '</option>');
                 });
 
                 $('#username').val(message.payload.SelectedUserName).change();
-
-                // Set dropdown visibility once all the values and selected options have been set.
-                //onSelectionChange();
             }
         });
 
