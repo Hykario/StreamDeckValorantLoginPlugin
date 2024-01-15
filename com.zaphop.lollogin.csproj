@@ -119,6 +119,7 @@
     <Compile Include="WindowWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitlab-ci.yml" />
     <None Include="App.config" />
     <None Include="Install.bat" />
     <None Include="manifest.json">
@@ -129,7 +130,6 @@
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="!!README!!.txt" />
     <Content Include=".gitignore" />
     <Content Include="DistributionTool.exe" />
     <Content Include="Help.html">
