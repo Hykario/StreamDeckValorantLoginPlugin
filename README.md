@@ -2,6 +2,9 @@
 
 This plugin is used to quickly log into League of Legends and will support multiple accounts so that you can log into all of your accounts easily. It will also terminate all Riot client processes so that you don't have to wait between logins.
 
+![Build](https://github.com/BackTrak/StreamDeckLolLoginPlugin/blob/master/.github/workflows/dotnet.yml/badge.svg)
+
+
 Pre-requisites. 
    * Install the latest version of [dotnet](https://dotnet.microsoft.com/en-us/download)
 To install, clone or download the repo, and build it.
