@@ -11,13 +11,18 @@
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
             integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
             crossorigin="anonymous"></script>
+    <script src="Scripts/jsencrypt.min.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <div class="sdpi-item" id="lollogin_username_select">
             <div class="sdpi-item-label">User Name</div>
-            <select class="sdProperty sdpi-item-value select" id="username" oninput="setSettings()">
-            </select>
+            <input type="text" class="sdProperty sdpi-item-value field" id="username" required onchange="setSettings()" />
+        </div>
+
+        <div class="sdpi-item" id="lollogin_password">
+            <div class="sdpi-item-label">Password</div>
+            <input type="password" class="sdProperty password" id="password" required onchange="updatePassword()" />
         </div>
 
         <div class="sdpi-item" id="lollogin_login_wait_seconds">
@@ -25,18 +30,28 @@
             <input type="text" class="sdProperty sdpi-item-value field" id="login_wait_seconds" value="3" placeholder="e.g. 3" required pattern="\d{1,2}" onchange="setSettings()" />
         </div>
 
-        <div class="sdpi-item" id="lollogin_credential_manager">
-            <button class="sdProperty sdpi-item-value button" onclick="showCredentialManager()">Credential Manager</button>
-        </div>
 
-        <div class="sdpi-item" id="lollogin_credential_manager">
-            <button class="sdProperty sdpi-item-value button" onclick="showHelp()">Help</button>
-        </div>
+
+        <!--<div class="sdpi-item" id="lollogin_login_uuid">
+        <div class="sdpi-item-label">UUID (Hidden)</div>
+        <input type="text" class="sdProperty sdpi-item-value field" id="instance_uuid" value="" onchange="setSettings()" />
+    </div>-->
+        <!--<div class="sdpi-item" id="lollogin_credential_manager">
+        <button class="sdProperty sdpi-item-value button" onclick="showCredentialManager()">Credential Manager</button>
+    </div>
+
+    <div class="sdpi-item" id="lollogin_credential_manager">
+        <button class="sdProperty sdpi-item-value button" onclick="showHelp()">Help</button>
+    </div>-->
 
     </div>
 </body>
 
 <script>
+
+    //$(function () {
+    //    $("#instance_uuid").val(crypto.randomUUID());
+    //});
 
     document.addEventListener('websocketCreate', function () {
         websocket.addEventListener('message', function (event) {
@@ -47,6 +62,9 @@
             if (message.event == "sendToPropertyInspector") {
                 console.log("payload", message.payload);
 
+                $('#password').val(message.payload.password);
+
+                /*
                 $('#username').children().remove().end();
 
                 message.payload.UserNames.forEach((element) => {
@@ -54,6 +72,7 @@
                 });
 
                 $('#username').val(message.payload.SelectedUserName).change();
+                */
             }
         });
 
@@ -71,6 +90,15 @@
     function showHelp() {
         sendPayloadToPlugin({
             action: "showHelp"
+        });
+    }
+
+    function updatePassword() {
+        let password = $("#password").val();
+     
+        sendPayloadToPlugin({
+            action: "setPassword",
+            password: password
         });
     }
 

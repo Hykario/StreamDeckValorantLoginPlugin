@@ -1,4 +1,8 @@
-﻿using Microsoft.Win32;
+﻿using FlaUI.Core.AutomationElements;
+using FlaUI.Core.Conditions;
+using FlaUI.Core.Definitions;
+using FlaUI.UIA3;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,58 +13,113 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Button = FlaUI.Core.AutomationElements.Button;
 
 namespace LolLogin
 {
     internal class LolLoginManager
     {
-        public void Login(string username, int loginWaitSeconds)
+        public void Login(string username, string password, int loginWaitSeconds)
         {
-            var password = GetPasswordFromCredentialManager(username);
+            //var password = GetPasswordFromCredentialManager(username);
 
             KillRunningRiotProcesses();
 
             LaunchRiotClient();
 
-            Win32.RECT rect = WaitForRiotClient(30);
+            WaitForRiotClient(30);
 
-            Thread.Sleep(loginWaitSeconds * 1000);
+            Process process = Process.GetProcessesByName("RiotClientUx")[0];
 
-            var offsetX = 110F / 1536F * (rect.right - rect.left);
-            var offsetY = 250F / 864F * (rect.bottom - rect.top);
+            //will write "abc" in the open Notepad window
+            var application = FlaUI.Core.Application.Attach(process);
 
-            var usernameTextboxOffset = new Point((int)offsetX, (int)offsetY);
+            var mainWindow = application.GetMainWindow(new UIA3Automation());
 
-            Win32.SendLeftClick(new System.Drawing.Point(rect.left + usernameTextboxOffset.X, rect.top + usernameTextboxOffset.Y));
+            FlaUI.Core.Input.Wait.UntilResponsive(mainWindow.FindFirstChild(), TimeSpan.FromMilliseconds(5000));
+            ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
 
-            KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
+            //DumpChildren(mainWindow.FindAllChildren(), 0);
+            //var c = mainWindow.FindAllChildren();
 
-            KeySender.SendString(username);
+            while (mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null)
+                Thread.Sleep(100);
 
-            KeySender.SendKeyPressToActiveApplication(Keys.Tab);
+            var usernameTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
+            usernameTextbox.Text = username;
+            Thread.Sleep(100);
 
-            KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
+            while (mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null)
+                Thread.Sleep(100);
 
-            KeySender.SendString(password);
+            var passwordTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
+            passwordTextbox.Text = password;
+            Thread.Sleep(100);
 
-            for (int i = 0; i < 6; i++)
-                KeySender.SendKeyPressToActiveApplication(Keys.Tab);
+            while (mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1)
+                Thread.Sleep(100);
 
-            KeySender.SendKeyPressToActiveApplication(Keys.Enter);
+            var desc = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
+            var children = desc.Parent.Parent.FindAllChildren();
+
+            Button signinButton = null;
+
+            for (int i = 0; i < children.Length; i++)
+            {
+                if (children[i].AsCheckBox().Text == "Stay signed in")
+                    signinButton = children[i + 1].AsButton();
+            }
+
+            if (signinButton == null)
+                throw new Exception("Couldn't find signin button on Login form.");
+
+            signinButton.Invoke();
+
+            //var descendants = mainWindow.FindAllDescendants(cf.ByName("Sign in"));
+            //var signinButton = descendants.First(p => p.ControlType == ControlType.Button);
+
+            //signinButton.AsButton().Invoke();
+
+
+            //Win32.RECT rect = WaitForRiotClient(30);
+
+            //Thread.Sleep(loginWaitSeconds * 1000);
+
+            //var offsetX = 110F / 1536F * (rect.right - rect.left);
+            //var offsetY = 250F / 864F * (rect.bottom - rect.top);
+
+            //var usernameTextboxOffset = new Point((int)offsetX, (int)offsetY);
+
+            //Win32.SendLeftClick(new System.Drawing.Point(rect.left + usernameTextboxOffset.X, rect.top + usernameTextboxOffset.Y));
+
+            //KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
+
+            //KeySender.SendString(username);
+
+            //KeySender.SendKeyPressToActiveApplication(Keys.Tab);
+
+            //KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
+
+            //KeySender.SendString(password);
+
+            //for (int i = 0; i < 6; i++)
+            //    KeySender.SendKeyPressToActiveApplication(Keys.Tab);
+
+            //KeySender.SendKeyPressToActiveApplication(Keys.Enter);
         }
 
-        private string GetPasswordFromCredentialManager(string username)
-        {
-            var set = new CredentialManagement.CredentialSet();
-            set.Load();
+        //private string GetPasswordFromCredentialManager(string username)
+        //{
+        //    var set = new CredentialManagement.CredentialSet();
+        //    set.Load();
 
-            var credential = set.FirstOrDefault(p => p.Target == $"{CredentialManager.CredentialManagementTypePrefix} - {username}" && p.Username == username);
+        //    var credential = set.FirstOrDefault(p => p.Target == $"{CredentialManager.CredentialManagementTypePrefix} - {username}" && p.Username == username);
 
-            if (credential == null)
-                throw new Exception("Password could not be found for user: " + username);
+        //    if (credential == null)
+        //        throw new Exception("Password could not be found for user: " + username);
 
-            return credential.Password;
-        }
+        //    return credential.Password;
+        //}
 
         private static Win32.RECT WaitForRiotClient(int secondsToWait)
         {
