@@ -11,13 +11,12 @@
     <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
             integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8="
             crossorigin="anonymous"></script>
-    <script src="Scripts/jsencrypt.min.js"></script>
 </head>
 <body>
     <div class="sdpi-wrapper">
         <div class="sdpi-item" id="lollogin_username_select">
             <div class="sdpi-item-label">User Name</div>
-            <input type="text" class="sdProperty sdpi-item-value field" id="username" required onchange="setSettings()" />
+            <input type="text" class="sdProperty sdpi-item-value field" id="username" placeholder="Riot Account Name" required onchange="setSettings()" />
         </div>
 
         <div class="sdpi-item" id="lollogin_password">
@@ -30,77 +29,48 @@
             <input type="text" class="sdProperty sdpi-item-value field" id="login_wait_seconds" value="3" placeholder="e.g. 3" required pattern="\d{1,2}" onchange="setSettings()" />
         </div>
 
-
-
-        <!--<div class="sdpi-item" id="lollogin_login_uuid">
-        <div class="sdpi-item-label">UUID (Hidden)</div>
-        <input type="text" class="sdProperty sdpi-item-value field" id="instance_uuid" value="" onchange="setSettings()" />
-    </div>-->
-        <!--<div class="sdpi-item" id="lollogin_credential_manager">
-        <button class="sdProperty sdpi-item-value button" onclick="showCredentialManager()">Credential Manager</button>
     </div>
 
-    <div class="sdpi-item" id="lollogin_credential_manager">
-        <button class="sdProperty sdpi-item-value button" onclick="showHelp()">Help</button>
-    </div>-->
+    <script>
+        document.addEventListener('websocketCreate', function () {
+            websocket.addEventListener('message', function (event) {
+                console.log("Got message event!", event.data);
 
-    </div>
+                let message = JSON.parse(event.data);
+
+                if (message.event == "sendToPropertyInspector") {
+                    console.log("payload", message.payload);
+
+                    $('#password').val(message.payload.password);
+                }
+            });
+
+            sendPayloadToPlugin({
+                action: "getUserNames"
+            });
+        });
+
+        function showCredentialManager() {
+            sendPayloadToPlugin({
+                action: "showCredentialManager"
+            });
+        }
+
+        function showHelp() {
+            sendPayloadToPlugin({
+                action: "showHelp"
+            });
+        }
+
+        function updatePassword() {
+            let password = $("#password").val();
+
+            sendPayloadToPlugin({
+                action: "setPassword",
+                password: password
+            });
+        }
+
+    </script>
 </body>
-
-<script>
-
-    //$(function () {
-    //    $("#instance_uuid").val(crypto.randomUUID());
-    //});
-
-    document.addEventListener('websocketCreate', function () {
-        websocket.addEventListener('message', function (event) {
-            console.log("Got message event!", event.data);
-
-            let message = JSON.parse(event.data);
-
-            if (message.event == "sendToPropertyInspector") {
-                console.log("payload", message.payload);
-
-                $('#password').val(message.payload.password);
-
-                /*
-                $('#username').children().remove().end();
-
-                message.payload.UserNames.forEach((element) => {
-                    $('#username').append('<option value="' + element.ID + '">' + element.Name + '</option>');
-                });
-
-                $('#username').val(message.payload.SelectedUserName).change();
-                */
-            }
-        });
-
-        sendPayloadToPlugin({
-            action: "getUserNames"
-        });
-    });
-
-    function showCredentialManager() {
-        sendPayloadToPlugin({
-            action: "showCredentialManager"
-        });
-    }
-
-    function showHelp() {
-        sendPayloadToPlugin({
-            action: "showHelp"
-        });
-    }
-
-    function updatePassword() {
-        let password = $("#password").val();
-     
-        sendPayloadToPlugin({
-            action: "setPassword",
-            password: password
-        });
-    }
-
-</script>
 </html>

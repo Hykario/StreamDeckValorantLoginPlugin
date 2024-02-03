@@ -14,6 +14,7 @@ I have submitted this to the Elgato marketplace, so most people should install i
 * BarRaider: https://github.com/BarRaider/streamdeck-tools
 * iLya Lozovyy / CredentialManagement: https://github.com/ilyalozovyy/credentialmanagement
 * SVG Repo : https://www.svgrepo.com/svg/141471/login
+* Roemer / FlaUI.Core: https://www.nuget.org/packages/FlaUI.Core/4.0.0
 
 # Stream Info
 I stream every night at 10pm Central on Twitch. If you like League of Legends and a chill stream, come and check me out!

@@ -1,28 +1,19 @@
 ﻿using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Conditions;
-using FlaUI.Core.Definitions;
 using FlaUI.UIA3;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using Button = FlaUI.Core.AutomationElements.Button;
 
 namespace LolLogin
 {
     internal class LolLoginManager
     {
-        public void Login(string username, string password, int loginWaitSeconds)
+        public void Login(string username, string password)
         {
-            //var password = GetPasswordFromCredentialManager(username);
-
             KillRunningRiotProcesses();
 
             LaunchRiotClient();
@@ -31,7 +22,6 @@ namespace LolLogin
 
             Process process = Process.GetProcessesByName("RiotClientUx")[0];
 
-            //will write "abc" in the open Notepad window
             var application = FlaUI.Core.Application.Attach(process);
 
             var mainWindow = application.GetMainWindow(new UIA3Automation());
@@ -39,33 +29,35 @@ namespace LolLogin
             FlaUI.Core.Input.Wait.UntilResponsive(mainWindow.FindFirstChild(), TimeSpan.FromMilliseconds(5000));
             ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
 
-            //DumpChildren(mainWindow.FindAllChildren(), 0);
-            //var c = mainWindow.FindAllChildren();
-
-            while (mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null)
+            for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null; i++)
                 Thread.Sleep(100);
 
             var usernameTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
             usernameTextbox.Text = username;
             Thread.Sleep(100);
 
-            while (mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null)
+            for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null; i++)
                 Thread.Sleep(100);
 
             var passwordTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
             passwordTextbox.Text = password;
             Thread.Sleep(100);
 
-            while (mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1)
+            for (int i = 0; i < 30 * 100 && mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1; i++)
                 Thread.Sleep(100);
 
-            var desc = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
-            var children = desc.Parent.Parent.FindAllChildren();
+            // Find the first button after the Sign in text. Riot removed the Automation ID from it
+            // so we have to hunt it down.
+            var descendant = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
+            var children = descendant.Parent.Parent.FindAllChildren();
 
             Button signinButton = null;
 
             for (int i = 0; i < children.Length; i++)
             {
+                // Making a big assumption that the login button is always directly after the
+                // stay signed in checkbox. Might have to change this to look for a button 
+                // with square dimensions as the look/feel of the login dialog hasn't changed in years.
                 if (children[i].AsCheckBox().Text == "Stay signed in")
                     signinButton = children[i + 1].AsButton();
             }
@@ -74,52 +66,7 @@ namespace LolLogin
                 throw new Exception("Couldn't find signin button on Login form.");
 
             signinButton.Invoke();
-
-            //var descendants = mainWindow.FindAllDescendants(cf.ByName("Sign in"));
-            //var signinButton = descendants.First(p => p.ControlType == ControlType.Button);
-
-            //signinButton.AsButton().Invoke();
-
-
-            //Win32.RECT rect = WaitForRiotClient(30);
-
-            //Thread.Sleep(loginWaitSeconds * 1000);
-
-            //var offsetX = 110F / 1536F * (rect.right - rect.left);
-            //var offsetY = 250F / 864F * (rect.bottom - rect.top);
-
-            //var usernameTextboxOffset = new Point((int)offsetX, (int)offsetY);
-
-            //Win32.SendLeftClick(new System.Drawing.Point(rect.left + usernameTextboxOffset.X, rect.top + usernameTextboxOffset.Y));
-
-            //KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
-
-            //KeySender.SendString(username);
-
-            //KeySender.SendKeyPressToActiveApplication(Keys.Tab);
-
-            //KeySender.SendKeyPressToActiveApplication(Keys.A | Keys.Control);
-
-            //KeySender.SendString(password);
-
-            //for (int i = 0; i < 6; i++)
-            //    KeySender.SendKeyPressToActiveApplication(Keys.Tab);
-
-            //KeySender.SendKeyPressToActiveApplication(Keys.Enter);
         }
-
-        //private string GetPasswordFromCredentialManager(string username)
-        //{
-        //    var set = new CredentialManagement.CredentialSet();
-        //    set.Load();
-
-        //    var credential = set.FirstOrDefault(p => p.Target == $"{CredentialManager.CredentialManagementTypePrefix} - {username}" && p.Username == username);
-
-        //    if (credential == null)
-        //        throw new Exception("Password could not be found for user: " + username);
-
-        //    return credential.Password;
-        //}
 
         private static Win32.RECT WaitForRiotClient(int secondsToWait)
         {
@@ -190,8 +137,6 @@ namespace LolLogin
                 cmd.Start();
                 
                 runningProcesses.Add(cmd);
-
-                //runningProcesses.Add(Process.Start($"taskkill", $"/f /im {item}"));
             }
 
             while (true)
