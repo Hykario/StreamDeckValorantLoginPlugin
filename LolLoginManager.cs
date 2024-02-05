@@ -12,60 +12,85 @@ namespace LolLogin
 {
     internal class LolLoginManager
     {
-        public void Login(string username, string password)
+        public delegate void OnProgressUpdateDelegate(double progress);
+
+        public void Login(string username, string password, OnProgressUpdateDelegate onProgressUpdate)
         {
-            KillRunningRiotProcesses();
-
-            LaunchRiotClient();
-
-            WaitForRiotClient(30);
-
-            Process process = Process.GetProcessesByName("RiotClientUx")[0];
-
-            var application = FlaUI.Core.Application.Attach(process);
-
-            var mainWindow = application.GetMainWindow(new UIA3Automation());
-
-            FlaUI.Core.Input.Wait.UntilResponsive(mainWindow.FindFirstChild(), TimeSpan.FromMilliseconds(5000));
-            ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
-
-            for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null; i++)
-                Thread.Sleep(100);
-
-            var usernameTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
-            usernameTextbox.Text = username;
-            Thread.Sleep(100);
-
-            for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null; i++)
-                Thread.Sleep(100);
-
-            var passwordTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
-            passwordTextbox.Text = password;
-            Thread.Sleep(100);
-
-            for (int i = 0; i < 30 * 100 && mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1; i++)
-                Thread.Sleep(100);
-
-            // Find the first button after the Sign in text. Riot removed the Automation ID from it
-            // so we have to hunt it down.
-            var descendant = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
-            var children = descendant.Parent.Parent.FindAllChildren();
-
-            Button signinButton = null;
-
-            for (int i = 0; i < children.Length; i++)
+            try
             {
-                // Making a big assumption that the login button is always directly after the
-                // stay signed in checkbox. Might have to change this to look for a button 
-                // with square dimensions as the look/feel of the login dialog hasn't changed in years.
-                if (children[i].AsCheckBox().Text == "Stay signed in")
-                    signinButton = children[i + 1].AsButton();
+                onProgressUpdate(0.0);
+
+                KillRunningRiotProcesses();
+
+                onProgressUpdate(0.1);
+
+                LaunchRiotClient();
+
+                onProgressUpdate(0.2);
+
+                WaitForRiotClient(30);
+
+                onProgressUpdate(0.3);
+
+                Process process = Process.GetProcessesByName("RiotClientUx")[0];
+
+                var application = FlaUI.Core.Application.Attach(process);
+
+                var mainWindow = application.GetMainWindow(new UIA3Automation());
+
+                FlaUI.Core.Input.Wait.UntilResponsive(mainWindow.FindFirstChild(), TimeSpan.FromMilliseconds(10000));
+                ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
+
+                onProgressUpdate(0.5);
+
+                for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null; i++)
+                    Thread.Sleep(100);
+
+                onProgressUpdate(0.6);
+
+                var usernameTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
+                usernameTextbox.Text = username;
+                Thread.Sleep(100);
+
+                for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null; i++)
+                    Thread.Sleep(100);
+
+                onProgressUpdate(0.75);
+
+                var passwordTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
+                passwordTextbox.Text = password;
+                Thread.Sleep(100);
+
+                for (int i = 0; i < 30 * 100 && mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1; i++)
+                    Thread.Sleep(100);
+
+                onProgressUpdate(0.9);
+
+                // Find the first button after the Sign in text. Riot removed the Automation ID from it
+                // so we have to hunt it down.
+                var descendant = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
+                var children = descendant.Parent.Parent.FindAllChildren();
+
+                Button signinButton = null;
+
+                for (int i = 0; i < children.Length; i++)
+                {
+                    // Making a big assumption that the login button is always directly after the
+                    // stay signed in checkbox. Might have to change this to look for a button 
+                    // with square dimensions as the look/feel of the login dialog hasn't changed in years.
+                    if (children[i].AsCheckBox().Text == "Stay signed in")
+                        signinButton = children[i + 1].AsButton();
+                }
+
+                if (signinButton == null)
+                    throw new Exception("Couldn't find signin button on Login form.");
+
+                signinButton.Invoke();
             }
-
-            if (signinButton == null)
-                throw new Exception("Couldn't find signin button on Login form.");
-
-            signinButton.Invoke();
+            finally
+            {
+                onProgressUpdate(1.0);
+            }
         }
 
         private static Win32.RECT WaitForRiotClient(int secondsToWait)

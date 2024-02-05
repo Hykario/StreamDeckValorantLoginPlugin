@@ -2,6 +2,8 @@
 
 This plugin is used to quickly log into League of Legends and will support multiple accounts so that you can log into all of your accounts easily. It will also terminate all Riot client processes so that you don't have to wait between logins.
 
+Be sure to use your Riot Account ID, and not your screen name! If you don't know it, you can find it using [Riot Account Recovery](https://recovery.riotgames.com/en/forgot-username)
+
 Pre-requisites. 
    * Install the latest version of [dotnet](https://dotnet.microsoft.com/en-us/download)
 To install, clone or download the repo, and build it.

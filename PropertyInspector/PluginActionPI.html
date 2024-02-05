@@ -15,20 +15,14 @@
 <body>
     <div class="sdpi-wrapper">
         <div class="sdpi-item" id="lollogin_username_select">
-            <div class="sdpi-item-label">User Name</div>
+            <div class="sdpi-item-label">Riot Account Name</div>
             <input type="text" class="sdProperty sdpi-item-value field" id="username" placeholder="Riot Account Name" required onchange="setSettings()" />
         </div>
 
         <div class="sdpi-item" id="lollogin_password">
             <div class="sdpi-item-label">Password</div>
-            <input type="password" class="sdProperty password" id="password" required onchange="updatePassword()" />
+            <input type="password" class="sdProperty sdpi-item-value password" id="password" required onchange="updatePassword()" />
         </div>
-
-        <div class="sdpi-item" id="lollogin_login_wait_seconds">
-            <div class="sdpi-item-label">Login Window Wait Seconds</div>
-            <input type="text" class="sdProperty sdpi-item-value field" id="login_wait_seconds" value="3" placeholder="e.g. 3" required pattern="\d{1,2}" onchange="setSettings()" />
-        </div>
-
     </div>
 
     <script>
