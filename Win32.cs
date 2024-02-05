@@ -98,20 +98,6 @@ namespace LolLogin
         // The SendMessage function sends the specified message to a window or windows. 
         // It calls the window procedure for the specified window and does not return
         // until the window procedure has processed the message. 
-        //[DllImport("User32.dll")]
-        //public static extern Int32 SendMessage(
-        //    int hWnd,               // handle to destination window
-        //    int Msg,                // message
-        //    int wParam,             // first message parameter
-        //    [MarshalAs(UnmanagedType.LPStr)] string lParam); // second message parameter
-
-        //[DllImport("User32.dll")]
-        //public static extern Int32 SendMessage(
-        //    int hWnd,               // handle to destination window
-        //    int Msg,                // message
-        //    int wParam,             // first message parameter
-        //    int lParam);            // second message parameter
-
         [DllImport("User32.dll")]
         public static extern Int32 SendMessage(
             IntPtr hWnd,               // handle to destination window
@@ -119,20 +105,6 @@ namespace LolLogin
             IntPtr wParam,             // first message parameter
             IntPtr lParam);            // second message parameter
 
-
-        //public static void SendMouseClick(IntPtr iHandle, int X, int Y)
-        //{
-        //    iHandle = (IntPtr) 0x002E11F8;
-
-        //    //int X = X - WindowRect.left;
-        //    //int Y = Y - winsowRect.top;
-        //    IntPtr lparm = (IntPtr) (Y << 16) + X;
-        //    int lngResult = SendMessage(iHandle, WM_LBUTTONDOWN, (IntPtr)0, lparm);
-
-        //    Thread.Sleep(500);
-
-        //    int lngResult2 = SendMessage(iHandle, WM_LBUTTONUP, (IntPtr)0, lparm);
-        //}
 
         [DllImport("user32.dll")]
         static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, int dwExtraInfo);
@@ -176,16 +148,6 @@ namespace LolLogin
             Thread.Sleep(300);
             mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
         }
-
-        //public static void SendLeftDrag(int startX, int startY, int amountToMoveX, int amountToMoveY, CancellationTokenSource cancellationToken)
-        //{
-        //    SendLeftDragAndHold(startX, startY, amountToMoveX, amountToMoveY, 0, cancellationToken);
-        //}
-
-        //public static void SendLeftDrag(int startX, int startY, int amountToMoveX, int amountToMoveY, int releaseDelayMS)
-        //{
-        //    SendLeftDragAndHold(startX, startY, amountToMoveX, amountToMoveY, releaseDelayMS, null);
-        //}
 
         public static void SendLeftDragAndHold(int startX, int startY, int amountToMoveX, int amountToMoveY)
         {
@@ -254,34 +216,6 @@ namespace LolLogin
 
                 Thread.Sleep(10);
             }
-
-
-            //mouse_event(MOUSEEVENTF_MOVE, 200, 0, 0, 0);
-
-            // Set Cursor Second Location
-            //SetCursorPos(x + 100, y);
-
-
-
-
-            //if (cancellationToken != null)
-            //{
-            //    Console.WriteLine("Waiting for cancellation token.");
-
-            //    for (int i = 0; i < 30 && cancellationToken.Token.WaitHandle.WaitOne(1000) == false; i++) ;
-            //}
-            //else
-            //{
-            //    delaySW.Stop();
-            //    Thread.Sleep(releaseDelayMS - (int) delaySW.ElapsedMilliseconds);
-            //}
-
-            //// Release click
-            //mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0);
-
-            //sw.Stop();
-
-            //Console.WriteLine(sw.ElapsedMilliseconds);
         }
 
         public static void ReleaseLeftDragHold()
