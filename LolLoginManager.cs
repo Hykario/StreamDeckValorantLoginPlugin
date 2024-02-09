@@ -1,11 +1,14 @@
 ﻿using FlaUI.Core.AutomationElements;
 using FlaUI.Core.Conditions;
+using FlaUI.Core.Definitions;
+using FlaUI.Core.Exceptions;
 using FlaUI.UIA3;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 
 namespace LolLogin
@@ -32,59 +35,129 @@ namespace LolLogin
 
                 onProgressUpdate(0.3);
 
-                Process process = Process.GetProcessesByName("RiotClientUx")[0];
+                Process targetProcess = null;
 
-                var application = FlaUI.Core.Application.Attach(process);
+                foreach (var proc in Process.GetProcessesByName("RIOT CLIENT"))
+                {
+                    ProcessCommandLine.Retrieve(proc, out string cl);
+
+                    if (cl.Contains("--type=") == true)
+                        continue;
+
+                    targetProcess = proc;
+                    break;
+                }
+
+                if (targetProcess == null)
+                    throw new Exception("Couldn't find 'Riot Client.exe' with a main window handle.");
+
+                var application = FlaUI.Core.Application.Attach(targetProcess);
 
                 var mainWindow = application.GetMainWindow(new UIA3Automation());
 
-                FlaUI.Core.Input.Wait.UntilResponsive(mainWindow.FindFirstChild(), TimeSpan.FromMilliseconds(10000));
                 ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
 
                 onProgressUpdate(0.5);
 
-                for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("username")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox() == null; i++)
+                FlaUI.Core.AutomationElements.TextBox usernameTextbox = null;
+                FlaUI.Core.AutomationElements.TextBox passwordTextbox = null;
+                FlaUI.Core.AutomationElements.Button signinButton = null;
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    try
+                    {
+                        if (usernameTextbox == null || String.IsNullOrEmpty(usernameTextbox.AutomationId) == true)
+                        {
+                            var control = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
+                            if (control != null && String.IsNullOrEmpty(control.AutomationId) == false)
+                            {
+                                usernameTextbox = control;
+                                onProgressUpdate(0.6);
+                            }
+                        }
+                    }
+                    catch (PropertyNotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        if (passwordTextbox == null || String.IsNullOrEmpty(passwordTextbox.AutomationId) == true)
+                        {
+                            var control = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
+                            if (control != null && String.IsNullOrEmpty(control.AutomationId) == false)
+                            {
+                                passwordTextbox = control;
+                                onProgressUpdate(0.7);
+                            }
+                        }
+                    }
+                    catch (PropertyNotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        if (signinButton == null)
+                        {
+                            var buttons = mainWindow.FindAll(TreeScope.Descendants, cf.ByControlType(ControlType.Button));
+
+                            // The sign in button has no name and is also almost square. The below should find it at all resolutions.
+                            var button = buttons.FirstOrDefault(p => String.IsNullOrEmpty(p.Name) == true && Math.Abs(p.BoundingRectangle.Width - p.BoundingRectangle.Height) < 10);
+
+                            if (button != null)
+                            {
+                                signinButton = button.AsButton();
+                                onProgressUpdate(0.8);
+                            }
+                        }
+                    }
+                    catch (PropertyNotSupportedException)
+                    {
+                    }
+
+                    try
+                    {
+                        if (usernameTextbox != null
+                            && passwordTextbox != null
+                            && signinButton != null)
+                        {
+                            // Final checks to ensure controls are in states that we can interact with. 
+                            FlaUI.Core.Input.Wait.UntilResponsive(usernameTextbox, TimeSpan.FromMilliseconds(10000));
+                            FlaUI.Core.Input.Wait.UntilResponsive(passwordTextbox, TimeSpan.FromMilliseconds(10000));
+                            var patternTest = signinButton.InvokePattern.EventIds;
+
+                            // Everything is ready, we can leave the loop.
+                            break;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Reset the controls and attempt to find current versions.
+                        usernameTextbox = null;
+                        passwordTextbox = null;
+                        signinButton = null;
+                        onProgressUpdate(0.5);
+                    }
+
+
                     Thread.Sleep(100);
+                }
 
-                onProgressUpdate(0.6);
+                if (usernameTextbox == null)
+                    throw new Exception("Couldn't find username text box.");
 
-                var usernameTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("username")).AsTextBox();
-                usernameTextbox.Text = username;
-                Thread.Sleep(100);
+                if (passwordTextbox == null)
+                    throw new Exception("Couldn't find password text box.");
 
-                for (int i = 0; i < 30 * 100 && mainWindow.FindFirstDescendant(cf.ByAutomationId("password")) == null || mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox() == null; i++)
-                    Thread.Sleep(100);
-
-                onProgressUpdate(0.75);
-
-                var passwordTextbox = mainWindow.FindFirstDescendant(cf.ByAutomationId("password")).AsTextBox();
-                passwordTextbox.Text = password;
-                Thread.Sleep(100);
-
-                for (int i = 0; i < 30 * 100 && mainWindow.FindAllDescendants(cf.ByName("Sign in")) == null || mainWindow.FindAllDescendants(cf.ByName("Sign in")).Length < 1; i++)
-                    Thread.Sleep(100);
+                if (signinButton == null)
+                    throw new Exception("Couldn't find sign in button.");
 
                 onProgressUpdate(0.9);
 
-                // Find the first button after the Sign in text. Riot removed the Automation ID from it
-                // so we have to hunt it down.
-                var descendant = mainWindow.FindFirstDescendant(cf.ByName("Sign in"));
-                var children = descendant.Parent.Parent.FindAllChildren();
-
-                Button signinButton = null;
-
-                for (int i = 0; i < children.Length; i++)
-                {
-                    // Making a big assumption that the login button is always directly after the
-                    // stay signed in checkbox. Might have to change this to look for a button 
-                    // with square dimensions as the look/feel of the login dialog hasn't changed in years.
-                    if (children[i].AsCheckBox().Text == "Stay signed in")
-                        signinButton = children[i + 1].AsButton();
-                }
-
-                if (signinButton == null)
-                    throw new Exception("Couldn't find signin button on Login form.");
-
+                usernameTextbox.Text = username;
+                passwordTextbox.Text = password;
                 signinButton.Invoke();
             }
             finally
@@ -97,11 +170,10 @@ namespace LolLogin
         {
             for (int i = 0; i <= secondsToWait * 1000 / 100; i++)
             {
-                var procs = Process.GetProcessesByName("RiotClientUx");
+                var procs = Process.GetProcessesByName("RIOT CLIENT");
 
-                if (procs.Length > 0)
+                foreach (var proc in procs)
                 {
-                    var proc = procs[0];
                     Win32.RECT rect = new Win32.RECT();
                     if (Win32.GetWindowRect(proc.MainWindowHandle, ref rect))
                     {
@@ -109,6 +181,18 @@ namespace LolLogin
                         return rect;
                     }
                 }
+
+
+                //if (procs.Length > 0)
+                //{
+                //    var proc = procs[0];
+                //    Win32.RECT rect = new Win32.RECT();
+                //    if (Win32.GetWindowRect(proc.MainWindowHandle, ref rect))
+                //    {
+                //        Win32.SetForegroundWindowNative(proc.MainWindowHandle);
+                //        return rect;
+                //    }
+                //}
                 Thread.Sleep(100);
             }
 
