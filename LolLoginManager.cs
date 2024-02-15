@@ -232,7 +232,8 @@ namespace LolLogin
                 "leagueclientux.exe",
                 "leagueclientuxrender.exe",
                 "leaguecrashhandler64.exe",
-                "\"League Of Legends.exe\""
+                "\"League Of Legends.exe\"",
+                "\"Riot Client.exe\""
             });
 
             var runningProcesses = new List<Process>();
