@@ -35,25 +35,18 @@ namespace LolLogin
 
                 onProgressUpdate(0.3);
 
-                Process targetProcess = null;
+                var automation = new UIA3Automation();
+                var desktop = automation.GetDesktop();
 
-                foreach (var proc in Process.GetProcessesByName("RIOT CLIENT"))
+                AutomationElement mainWindow = null;
+                foreach (var child in desktop.FindAllChildren())
                 {
-                    ProcessCommandLine.Retrieve(proc, out string cl);
+                    Debug.WriteLine(child.Name);
 
-                    if (cl.Contains("--type=") == true)
-                        continue;
+                    if (child.Name.Equals("Riot Client") == true)
+						mainWindow = child;
 
-                    targetProcess = proc;
-                    break;
-                }
-
-                if (targetProcess == null)
-                    throw new Exception("Couldn't find 'Riot Client.exe' with a main window handle.");
-
-                var application = FlaUI.Core.Application.Attach(targetProcess);
-
-                var mainWindow = application.GetMainWindow(new UIA3Automation());
+				}
 
                 ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
 
