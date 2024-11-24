@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LolLogin
 {
@@ -112,8 +113,17 @@ namespace LolLogin
 
                         this.OnProgressUpdate += LolLoginPlugin_OnProgressUpdate;
 
-                        var loginManager = new LolLoginManager();
-                        loginManager.Login(_username, password, OnProgressUpdate);
+                        try
+                        {
+                            var loginManager = new LolLoginManager();
+                            loginManager.Login(true, _username, password, OnProgressUpdate);
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.ToString(), "LoL Login - Fatal Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                            Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
+						}
                     });
                 }
             }

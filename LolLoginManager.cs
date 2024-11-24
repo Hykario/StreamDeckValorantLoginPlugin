@@ -17,36 +17,32 @@ namespace LolLogin
     {
         public delegate void OnProgressUpdateDelegate(double progress);
 
-        public void Login(string username, string password, OnProgressUpdateDelegate onProgressUpdate)
+        public void Login(bool restartClient, string username, string password, OnProgressUpdateDelegate onProgressUpdate)
         {
             try
             {
-                onProgressUpdate(0.0);
+                if (restartClient == true)
+                {
 
-                KillRunningRiotProcesses();
+                    onProgressUpdate(0.0);
 
-                onProgressUpdate(0.1);
+                    KillRunningRiotProcesses();
 
-                LaunchRiotClient();
+                    onProgressUpdate(0.1);
 
-                onProgressUpdate(0.2);
+                    LaunchRiotClient();
 
-                WaitForRiotClient(30);
+                    onProgressUpdate(0.2);
+
+                    WaitForRiotClient(30);
+                }
 
                 onProgressUpdate(0.3);
 
                 var automation = new UIA3Automation();
                 var desktop = automation.GetDesktop();
 
-                AutomationElement mainWindow = null;
-                foreach (var child in desktop.FindAllChildren())
-                {
-                    Debug.WriteLine(child.Name);
-
-                    if (child.Name.Equals("Riot Client") == true)
-						mainWindow = child;
-
-				}
+				AutomationElement mainWindow = FindRiotClientWindow(30, automation, desktop);
 
                 ConditionFactory cf = new ConditionFactory(new UIA3PropertyLibrary());
 
@@ -159,7 +155,39 @@ namespace LolLogin
             }
         }
 
-        private static Win32.RECT WaitForRiotClient(int secondsToWait)
+		private AutomationElement FindRiotClientWindow(int secondsToWait, UIA3Automation automation, AutomationElement desktop)
+		{
+			AutomationElement mainWindow = null;
+
+            for (int i = 0; i <= secondsToWait * 1000 / 100 && mainWindow == null; i++)
+            {
+                foreach (var child in desktop.FindAllChildren())
+                {
+                    if (child.IsAvailable == false)
+                        continue;
+
+					if (child.IsEnabled == false)
+						continue;
+
+					if (string.IsNullOrEmpty(child.Name) == true)
+                        continue;
+
+                    Debug.WriteLine(child.Name);
+
+                    if (child.Name.Equals("Riot Client") == true)
+                        mainWindow = child;
+                }
+
+				Thread.Sleep(100);
+			}
+
+            if (mainWindow == null)
+                throw new Exception($"Couldn't find Riot Client window after {secondsToWait} seconds.");
+
+            return mainWindow;
+		}
+
+		private static Win32.RECT WaitForRiotClient(int secondsToWait)
         {
             for (int i = 0; i <= secondsToWait * 1000 / 100; i++)
             {
