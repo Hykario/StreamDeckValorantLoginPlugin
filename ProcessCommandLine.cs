@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace LolLogin
+namespace ValorantLogin
 {
     public static class ProcessCommandLine
     {

@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{4635D874-69C0-4010-BE46-77EF92EB1553}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>LolLogin</RootNamespace>
-    <AssemblyName>com.zaphop.lollogin</AssemblyName>
+    <RootNamespace>ValorantLogin</RootNamespace>
+    <AssemblyName>de.hykario.valorantlogin</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\com.zaphop.lollogin.sdPlugin\</OutputPath>
+    <OutputPath>bin\Debug\de.hykario.valorantlogin.sdPlugin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\com.zaphop.lollogin.sdPlugin\</OutputPath>
+    <OutputPath>bin\Release\de.hykario.valorantlogin.sdPlugin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

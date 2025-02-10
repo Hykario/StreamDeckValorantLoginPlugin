@@ -4,7 +4,7 @@ using FlaUI.Core.Conditions;
 using FlaUI.Core.Definitions;
 using FlaUI.Core.Exceptions;
 using FlaUI.UIA3;
-using LolLogin;
+using ValorantLogin;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
@@ -25,7 +25,7 @@ namespace Visualizer
 			// Uncomment this line of code to allow for debugging
 			//while (!System.Diagnostics.Debugger.IsAttached) { System.Threading.Thread.Sleep(100); }
 
-			// Uncomment this to run a quick check without restarting LoL client.
+			// Uncomment this to run a quick check without restarting Valorant client.
 			//TestHarness();
 
 			SDWrapper.Run(args);
@@ -33,7 +33,7 @@ namespace Visualizer
 
         private static void TestHarness()
         {
-			var loginManager = new LolLoginManager();
+			var loginManager = new ValorantLoginManager();
 			loginManager.Login(false, "Pork", "Muffins", (e) => { });
 		}
     }
