@@ -12,12 +12,12 @@ SET STREAM_DECK_FILE="C:\Program Files\Elgato\StreamDeck\StreamDeck.exe"
 SET STREAM_DECK_LOAD_TIMEOUT=7
 
 taskkill /f /im streamdeck.exe
-taskkill /f /im com.zaphop.lollogin.exe
-taskkill /f /im com.zaphop.visualizer.exe
+taskkill /f /im de.hykario.valorantlogin.exe
+taskkill /f /im de.hykario.visualizer.exe
 REM timeout /t 2
-del %OUTPUT_DIR%\com.zaphop.lollogin.streamDeckPlugin
-%DISTRIBUTION_TOOL% -b -i bin\Debug\com.zaphop.lollogin.sdPlugin -o %OUTPUT_DIR%
-rmdir %APPDATA%\Elgato\StreamDeck\Plugins\com.zaphop.lollogin.sdPlugin /s /q
+del %OUTPUT_DIR%\de.hykario.valorantlogin.streamDeckPlugin
+%DISTRIBUTION_TOOL% -b -i bin\Debug\de.hykario.valorantlogin.sdPlugin -o %OUTPUT_DIR%
+rmdir %APPDATA%\Elgato\StreamDeck\Plugins\de.hykario.valorantlogin.sdPlugin /s /q
 START "" %STREAM_DECK_FILE%
 timeout /t %STREAM_DECK_LOAD_TIMEOUT%
-%OUTPUT_DIR%\com.zaphop.lollogin.streamDeckPlugin
+%OUTPUT_DIR%\de.hykario.valorantlogin.streamDeckPlugin

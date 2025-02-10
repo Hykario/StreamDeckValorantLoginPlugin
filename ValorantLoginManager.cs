@@ -11,9 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 
-namespace LolLogin
+namespace ValorantLogin
 {
-    internal class LolLoginManager
+    internal class ValorantLoginManager
     {
         public delegate void OnProgressUpdateDelegate(double progress);
 
@@ -229,7 +229,7 @@ namespace LolLogin
             using (var key = Registry.CurrentUser.OpenSubKey(subKey, false))
             {
                 if (key == null)
-                    throw new Exception($"League of Legends is not installed, or missing uninstall inforamation: {subKey}");
+                    throw new Exception($"Valorant is not installed, or missing uninstall inforamation: {subKey}");
 
                 installLocation = key.GetValue("InstallLocation") as string;
             }
@@ -239,7 +239,7 @@ namespace LolLogin
 
             var fullName = new DirectoryInfo(Path.Combine(installLocation, "RiotClientServices.exe")).FullName;
 
-            Process.Start(fullName, "--launch-product=league_of_legends --launch-patchline=live");
+            Process.Start(fullName, "--launch-product=valorant --launch-patchline=live");
         }
 
         private static void KillRunningRiotProcesses()
@@ -249,11 +249,9 @@ namespace LolLogin
                 "riotclientservices.exe",
                 "riotclientux.exe",
                 "riotclientuxrender.exe",
-                "leagueclient.exe",
-                "leagueclientux.exe",
-                "leagueclientuxrender.exe",
-                "leaguecrashhandler64.exe",
-                "\"League Of Legends.exe\"",
+                "VALORANT.exe",
+                "VALORANT-Win64-Shipping.exe",
+                "\"Valorant.exe\"",
                 "\"Riot Client.exe\""
             });
 

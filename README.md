@@ -1,8 +1,8 @@
-# League Of Legends Login Manager
+# Valorant Login Manager
 
-![Build](https://github.com/BackTrak/StreamDeckLolLoginPlugin/actions/workflows/dotnet.yml/badge.svg)
+![Build](https://github.com/Hykario/StreamDeckValorantLoginPlugin/actions/workflows/dotnet.yml/badge.svg)
 
-This plugin is used to quickly log into League of Legends and will support multiple accounts so that you can log into all of your accounts easily. It will also terminate all Riot client processes so that you don't have to wait between logins.
+This plugin is used to quickly log into Valorant and will support multiple accounts so that you can log into all of your accounts easily. It will also terminate all Riot client processes so that you don't have to wait between logins.
 
 
 
@@ -21,8 +21,3 @@ I have submitted this to the Elgato marketplace, so most people should install i
 * iLya Lozovyy / CredentialManagement: https://github.com/ilyalozovyy/credentialmanagement
 * SVG Repo : https://www.svgrepo.com/svg/141471/login
 * Roemer / FlaUI.Core: https://www.nuget.org/packages/FlaUI.Core/4.0.0
-
-# Stream Info
-I stream every night at 10pm Central on Twitch. If you like League of Legends and a chill stream, come and check me out!
-
-https://www.twitch.tv/b4cktr4k

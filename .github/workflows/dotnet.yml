@@ -24,7 +24,7 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
       
       - name: Restore Packages
-        run: nuget restore com.zaphop.lollogin.sln
+        run: nuget restore de.hykario.valorantlogin.sln
       
       - name: Build solution
-        run: msbuild com.zaphop.lollogin.sln -t:build -property:Configuration=Release
+        run: msbuild de.hykario.valorantlogin.sln -t:build -property:Configuration=Release

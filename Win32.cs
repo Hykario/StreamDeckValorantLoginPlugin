@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace LolLogin
+namespace ValorantLogin
 {
     /// <summary>
     /// Summary description for Win32.

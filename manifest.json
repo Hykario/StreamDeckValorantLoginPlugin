@@ -2,7 +2,7 @@
     "Actions": [
         {
             "Icon": "Images/action20",
-            "Name": "LoL Login",
+            "Name": "Valorant Login",
             "States": [
                 {
                     "Image": "Images/action20",
@@ -11,19 +11,19 @@
                 }
             ],
             "SupportedInMultiActions": false,
-            "Tooltip": "Auto-Login for League of Legends",
-            "UUID": "com.zaphop.lollogin.lollogin"
+            "Tooltip": "Auto-Login for Valorant",
+            "UUID": "de.hykario.valorantlogin.valorantlogin"
         }
     ],
     "SDKVersion": 2,
-    "Author": "Nick Pirocanac",
-    "CodePath": "com.zaphop.lollogin.exe",
+    "Author": "Simon Schick",
+    "CodePath": "de.hykario.valorantlogin.exe",
     "Description": "League of Legends Login",
-    "Name": "LoL Login",
-    "Category": "LoL Utilities",
+    "Name": "Valorant Login",
+    "Category": "Valorant Utilities",
     "CategoryIcon": "Images/categoryIcon",
     "Icon": "Images/zhgold288",
-    "URL": "https://github.com/BackTrak/StreamDeckLolLoginPlugin",
+    "URL": "https://github.com/Hykario/StreamDeckValorantLoginPlugin",
     "Version": "1.2.0.3",
     "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html",
     "OS": [

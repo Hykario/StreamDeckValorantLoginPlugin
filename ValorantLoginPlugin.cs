@@ -10,10 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LolLogin
+namespace ValorantLogin
 {
-    [PluginActionId("com.zaphop.lollogin.lollogin")]
-    public class LolLoginPlugin : KeypadBase
+    [PluginActionId("de.hykario.valorantlogin.valorantlogin")]
+    public class ValorantLoginPlugin : KeypadBase
     {
         private static bool _inProgress = false;
         private static readonly object _syncObject = new object();
@@ -24,7 +24,7 @@ namespace LolLogin
         private string _encryptedPassword = null;
         private string _password = null; // This is always a string of * to match password length. 
 
-        private event LolLoginManager.OnProgressUpdateDelegate OnProgressUpdate;
+        private event ValorantLoginManager.OnProgressUpdateDelegate OnProgressUpdate;
 
         private void UpdateSettings(JObject settings)
         {
@@ -33,7 +33,7 @@ namespace LolLogin
             _password = settings.Value<String>("password");
         }
 
-        public LolLoginPlugin(SDConnection connection, InitialPayload payload) : base(connection, payload)
+        public ValorantLoginPlugin(SDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             UpdateSettings(payload.Settings);
 
@@ -111,16 +111,16 @@ namespace LolLogin
                             throw;
                         }
 
-                        this.OnProgressUpdate += LolLoginPlugin_OnProgressUpdate;
+                        this.OnProgressUpdate += ValorantLoginPlugin_OnProgressUpdate;
 
                         try
                         {
-                            var loginManager = new LolLoginManager();
+                            var loginManager = new ValorantLoginManager();
                             loginManager.Login(true, _username, password, OnProgressUpdate);
                         }
                         catch (Exception ex)
                         {
-                            MessageBox.Show(ex.ToString(), "LoL Login - Fatal Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            MessageBox.Show(ex.ToString(), "Valorant Login - Fatal Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
                             Logger.Instance.LogMessage(TracingLevel.ERROR, ex.ToString());
 						}
@@ -129,7 +129,7 @@ namespace LolLogin
             }
         }
 
-        private void LolLoginPlugin_OnProgressUpdate(double progress)
+        private void ValorantLoginPlugin_OnProgressUpdate(double progress)
         {
             Bitmap bitmap = new Bitmap(72, 72);
             Graphics graphics = Graphics.FromImage(bitmap);
