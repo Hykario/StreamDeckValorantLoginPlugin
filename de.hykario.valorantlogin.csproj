@@ -59,7 +59,8 @@
     <ManifestCertificateThumbprint>9711EF5EE38A948862AB4ADD7B8E2D52A343FAE2</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>de.hykario.valorantlogin_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>
+    </ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
