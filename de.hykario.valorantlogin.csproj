@@ -195,11 +195,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="de.hykario.valorantlogin_TemporaryKey.pfx" />
     <None Include="Install.bat" />
-    <None Include="manifest.json">
+    <Content Include="manifest.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    </Content>
     <None Include="packages.config" />
     <None Include="previews\Preview.xcf" />
     <None Include="README.md" />
